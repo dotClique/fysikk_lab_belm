@@ -18,17 +18,17 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.interpolate import CubicSpline
-
+from math import atan2
 # Horisontal avstand mellom festepunktene er 0.200 m
 h = 0.200
 xfast=np.asarray([0,h,2*h,3*h,4*h,5*h,6*h,7*h])
 
 
-# Vi begrenser starth├╕yden (og samtidig den maksimale h├╕yden) til
-# ├Ñ ligge mellom 250 og 300 mm
+# Vi begrenser starthøyden (og samtidig den maksimale høyden) til
+# å ligge mellom 250 og 300 mm
 ymax = 300
 # yfast: tabell med 8 heltall mellom 50 og 300 (mm); representerer
-# h├╕yden i de 8 festepunktene
+# høyden i de 8 festepunktene
 yfast=np.asarray(np.random.randint(50, ymax, size=8))
 #konverter fra m til mm
 yfast =yfast/1000
@@ -36,8 +36,8 @@ yfast =yfast/1000
 # banens stigningstall beregnet med utgangspunkt i de 8 festepunktene.
 inttan = np.diff(yfast)/h
 attempts=1
-# while-l├╕kken sjekker om en eller flere av de 3 betingelsene ovenfor
-# ikke er tilfredsstilt; i s├Ñ fall velges nye festepunkter inntil
+# while-løkken sjekker om en eller flere av de 3 betingelsene ovenfor
+# ikke er tilfredsstilt; i så fall velges nye festepunkter inntil
 # de 3 betingelsene er oppfylt
 while (yfast[0] < yfast[1]*1.04 or
        yfast[0] < yfast[2]*1.08 or
@@ -61,7 +61,7 @@ while (yfast[0] < yfast[1]*1.04 or
 # xfast = xfast/1000
 # yfast = yfast/1000
 
-# N├Ñr programmet her har avsluttet while-l├╕kka, betyr det at
+# Når programmet her har avsluttet while-løkka, betyr det at
 # tallverdiene i tabellen yfast vil resultere i en tilfredsstillende bane. 
 
 #Programmet beregner deretter de 7 tredjegradspolynomene, et
@@ -87,23 +87,50 @@ dy = cs(x,1)    #dy=tabell med 1401 verdier for y'(x)
 d2y = cs(x,2)   #d2y=tabell med 1401 verdier for y''(x)
 
 #Eksempel: Plotter banens form y(x)
-baneform = plt.figure('y(x)',figsize=(12,6))
-plt.plot(x,y,xfast,yfast,'*')
-plt.title('Banens form')
-plt.xlabel('$x$ (m)',fontsize=20)
-plt.ylabel('$y(x)$ (m)',fontsize=20)
-plt.ylim(0.0,0.40)
-plt.grid()
-plt.show()
+
 #Figurer kan lagres i det formatet du foretrekker:
 #baneform.savefig("baneform.pdf", bbox_inches='tight')
 #baneform.savefig("baneform.png", bbox_inches='tight')
 #baneform.savefig("baneform.eps", bbox_inches='tight')
 
+highest_point = np.max(y)
 
-print('Antall fors├╕k',attempts)
-print('Festepunkth├╕yder (m)',yfast)
-print('Banens h├╕yeste punkt (m)',np.max(y))
+g = 9.81
+c = 0.4
+speed = np.sqrt((highest_point-y)*g*2/(1+ c))
 
-print('NB: SKRIV NED festepunkth├╕ydene n├Ñr du/dere er forn├╕yd med banen.')
-print('Eller kj├╕r programmet p├Ñ nytt inntil en attraktiv baneform vises.')
+angles = []
+for i in range(len(y)-1):
+    angles.append(atan2((y[i+1]-y[i]), x[i+1]-x[i]))
+angles.append(angles[-1])
+angles = np.array(angles)
+print(angles)
+speedx = speed*np.cos(angles)
+
+time = [0]
+current_sum = 0
+for i in range(1, len(speedx)):
+    current_sum+=2*dx/(speedx[i]+speedx[i-1])
+    time.append(current_sum)
+time = np.array(time)
+
+
+
+print('Antall forsøk',attempts)
+print('Festepunkthøyder (m)',yfast)
+print('Banens høyeste punkt (m)',np.max(y))
+
+print('NB: SKRIV NED festepunkthøydene når du/dere er fornøyd med banen.')
+print('Eller kjør programmet på nytt inntil en attraktiv baneform vises.')
+
+baneform = plt.figure('y(x)',figsize=(12,6))
+plt.plot(x,y,xfast,yfast,'*')
+plt.plot(x,speed)
+plt.plot(x,speedx)
+plt.plot(time,x)
+#plt.plot(x,angles)
+plt.title('Banens form')
+plt.xlabel('$x$ (m)',fontsize=20)
+plt.ylabel('$y(x)$ (m)',fontsize=20)
+plt.grid()
+plt.show()

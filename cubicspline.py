@@ -99,22 +99,10 @@ g = 9.81
 c = 0.4
 speed = np.sqrt((highest_point-y)*g*2/(1+ c))
 
-angles = []
-for i in range(len(y)-1):
-    angles.append(atan2((y[i+1]-y[i]), x[i+1]-x[i]))
-angles.append(angles[-1])
-angles = np.array(angles)
-print(angles)
+angles = np.arctan(dy)
 speedx = speed*np.cos(angles)
 
-time = [0]
-current_sum = 0
-for i in range(1, len(speedx)):
-    current_sum+=2*dx/(speedx[i]+speedx[i-1])
-    time.append(current_sum)
-time = np.array(time)
-
-
+time = 2*dx*np.cumsum(1/(speedx[1:]+speedx[:-1]))
 
 print('Antall forsøk',attempts)
 print('Festepunkthøyder (m)',yfast)
@@ -127,8 +115,8 @@ baneform = plt.figure('y(x)',figsize=(12,6))
 plt.plot(x,y,xfast,yfast,'*')
 plt.plot(x,speed)
 plt.plot(x,speedx)
-plt.plot(time,x)
-#plt.plot(x,angles)
+plt.plot(time,x[1:])
+plt.plot(x,angles)
 plt.title('Banens form')
 plt.xlabel('$x$ (m)',fontsize=20)
 plt.ylabel('$y(x)$ (m)',fontsize=20)

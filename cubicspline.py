@@ -29,33 +29,7 @@ xfast=np.asarray([0,h,2*h,3*h,4*h,5*h,6*h,7*h])
 ymax = 300
 # yfast: tabell med 8 heltall mellom 50 og 300 (mm); representerer
 # høyden i de 8 festepunktene
-yfast=np.asarray(np.random.randint(50, ymax, size=8))
-#konverter fra m til mm
-yfast =yfast/1000
-# inttan: tabell med 7 verdier for (yfast[n+1]-yfast[n])/h (n=0..7); dvs
-# banens stigningstall beregnet med utgangspunkt i de 8 festepunktene.
-inttan = np.diff(yfast)/h
-attempts=1
-# while-løkken sjekker om en eller flere av de 3 betingelsene ovenfor
-# ikke er tilfredsstilt; i så fall velges nye festepunkter inntil
-# de 3 betingelsene er oppfylt
-while (yfast[0] < yfast[1]*1.04 or
-       yfast[0] < yfast[2]*1.08 or
-       yfast[0] < yfast[3]*1.12 or
-       yfast[0] < yfast[4]*1.16 or
-       yfast[0] < yfast[5]*1.20 or
-       yfast[0] < yfast[6]*1.24 or
-       yfast[0] < yfast[7]*1.28 or
-       yfast[0] < 0.250 or
-       np.max(np.abs(inttan)) > 0.4 or
-       inttan[0] > -0.2):
-          yfast=np.asarray(np.random.randint(0, ymax, size=8))
-          
-          #konverter fra m til mm
-          yfast =yfast/1000
-          
-          inttan = np.diff(yfast)/h
-          attempts=attempts+1
+yfast=np.array([0.28,  0.231, 0.216, 0.155, 0.128, 0.147, 0.121, 0.069])
 
 # Omregning fra mm til m:
 # xfast = xfast/1000
@@ -104,7 +78,6 @@ speedx = speed*np.cos(angles)
 
 time = 2*dx*np.cumsum(1/(speedx[1:]+speedx[:-1]))
 
-print('Antall forsøk',attempts)
 print('Festepunkthøyder (m)',yfast)
 print('Banens høyeste punkt (m)',np.max(y))
 
@@ -117,6 +90,7 @@ plt.plot(x,speed)
 plt.plot(x,speedx)
 plt.plot(time,x[1:])
 plt.plot(x,angles)
+plt.gca().set_aspect("equal", adjustable="box")
 plt.title('Banens form')
 plt.xlabel('$x$ (m)',fontsize=20)
 plt.ylabel('$y(x)$ (m)',fontsize=20)

@@ -71,12 +71,17 @@ highest_point = np.max(y)
 
 g = 9.81
 c = 0.4
+M = 0.031 # PLACEHOLDER
 speed = np.sqrt((highest_point-y)*g*2/(1+ c))
 
 angles = np.arctan(dy)
 speedx = speed*np.cos(angles)
+curvature = d2y/(np.power(1+np.power(dy, 2), 3/2))
+centripetal_acceleration = speed**2*curvature
+normal = M*(g*np.cos(angles)+centripetal_acceleration)/(M*g)
 
-time = 2*dx*np.cumsum(1/(speedx[1:]+speedx[:-1]))
+friction = c*M*g*np.sin(angles)/(1+c)
+time = np.concatenate((np.array([0]), (2*dx*np.cumsum(1/(speedx[1:]+speedx[:-1])))))
 
 print('Festepunkthøyder (m)',yfast)
 print('Banens høyeste punkt (m)',np.max(y))
@@ -84,15 +89,38 @@ print('Banens høyeste punkt (m)',np.max(y))
 print('NB: SKRIV NED festepunkthøydene når du/dere er fornøyd med banen.')
 print('Eller kjør programmet på nytt inntil en attraktiv baneform vises.')
 
+print(time)
 baneform = plt.figure('y(x)',figsize=(12,6))
-plt.plot(x,y,xfast,yfast,'*')
-plt.plot(x,speed)
-plt.plot(x,speedx)
-plt.plot(time,x[1:])
-plt.plot(x,angles)
-plt.gca().set_aspect("equal", adjustable="box")
-plt.title('Banens form')
-plt.xlabel('$x$ (m)',fontsize=20)
-plt.ylabel('$y(x)$ (m)',fontsize=20)
-plt.grid()
-plt.show()
+
+def plot(x, y, x_name, y_name, /, x_points=[], y_points=[]):
+    if (len(x_points) and len(y_points)):
+        plt.plot(x,y,x_points,y_points,'*')
+    else:
+        plt.plot(x,y)
+
+    #plt.plot(x,speed)
+    #plt.plot(x,speedx)
+    #plt.plot(x,curvature)
+    #plt.plot(x,centripetal_acceleration)
+    #plt.plot(x,normal)
+    #plt.plot(x,friction)
+    #plt.plot(x,np.ones((1401))*0.4)
+    #plt.plot(x,abs(friction/normal))
+    #plt.plot(time,x)
+    #plt.plot(time,speed)
+    #plt.plot(x,angles)
+    #plt.gca().set_aspect("equal", adjustable="box")
+    plt.title('Banens form')
+    plt.xlabel(x_name,fontsize=20)
+    plt.ylabel(y_name,fontsize=20)
+    plt.grid()
+    plt.show()
+
+plot(x,speed, "$x$ (m)", "$y(x)$ (m)", x_points=xfast, y_points=yfast)
+plot(x,angles, "$x$ (m)", "β (grader)")
+plot(x,curvature, "$x$ (m)", "K(x) (1/m)")
+plot(x,centripetal_acceleration, "$x$ (m)", "v (m/s)")
+plot(x,normal, "$x$ (m)", "N/Mg")
+plot(x,abs(friction/normal), "$x$ (m)", "|f/N|")
+plot(time,x, "$t$ (s)", "x (m)")
+plot(time,speed, "$t$ (s)", "v (m/s)")

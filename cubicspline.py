@@ -105,8 +105,8 @@ def plot(x, y, x_name, y_name, title,/, x_points=[], y_points=[]):
 
 plot(x,y, "$x$ (m)", "$y(x)$ (m)","Banens form", x_points=xfast, y_points=yfast)
 plot(x,speed, "$x$ (m)", "v (m/s)", "Fart")
-plot(x,angles, "$x$ (m)", "β (grader)", "Vinkel")
-plot(x,curvature, "$x$ (m)", "K(x) (1/m)", "Kurve")
+plot(x,angles, "$x$ (m)", "β (°)", "Vinkel")
+plot(x,curvature, "$x$ (m)", "K(x) (m⁻¹)", "Kurve")
 plot(x,normal, "$x$ (m)", "N/Mg", "Normalkraft")
 plot(x,abs(friction/normal), "$x$ (m)", "|f/N|", "Friksjon / Normalkraft")
 plot(time,x, "$t$ (s)", "x (m)", "Posisjon pr tid")

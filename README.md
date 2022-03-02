@@ -1,8 +1,10 @@
 # Notater
 Weight: 
 Ball 1: 30.2 g
+
 Ball 2: 30.5 g
 
-Radius:
-Ball 1: 11 mm
-Ball 2: 11 mm
+Diameter:
+Ball 1: 21.9 mm
+
+Ball 2: 21.9 mm
